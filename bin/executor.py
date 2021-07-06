@@ -2,7 +2,7 @@
 import logging
 from math import log
 from librosa.core import audio
-from dataset.dataset import idx2tag,tag2idx
+from dataset.iwslt_dataset import idx2tag,tag2idx
 import numpy as np
 import os
 import torch
@@ -80,7 +80,7 @@ class Executor:
         
         return total_loss, num_seen_utts
         
-    
+
     
     def evaluation(self, model, data_loader, device):
         model.eval()
@@ -108,7 +108,7 @@ class Executor:
                 for w, t, p in zip(words.split()[1:-1], tags.split()[1:-1], preds[1:-1]):
                     fout.write(f"{w} {t} {p}\n")
                 fout.write("\n")
-                
+        
         ## calc metric
         target_names = ['NP','COMMA','FS','QM']
         y_true =  np.array([tag2idx[line.split()[1]] for line in open("temp", 'r').read().splitlines() if len(line) > 0])

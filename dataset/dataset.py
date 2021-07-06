@@ -80,9 +80,8 @@ class PreProcess:
         
         final_train_data = list(map(lambda x: self._create_labels(x), final_cleaned_train_data))
         final_test_data = list(map(lambda x: self._create_labels(x), final_cleaned_test_data))
-        
         return final_train_data, final_test_data
-        
+
 
 class SPGISpeechDataset:
     def __init__(self, dataset,):
@@ -132,6 +131,7 @@ def collate_fun(batch):
     x = f(1, maxlen)
     y = f(-2, maxlen)
     return words, torch.LongTensor(x), is_heads, tags, torch.LongTensor(y), seqlens
+
 
 
 if __name__=='__main__':

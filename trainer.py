@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from models.model import BERTPunctuator
-from dataset.dataset import SPGISpeechDataset, collate_fun, PreProcess
+from dataset import BuildDataset, collate_fun, PreProcess
 import argparse
 from bin.executor import Executor
 from bin import BuildOptimizer, BuildScheduler
@@ -13,8 +13,10 @@ import logging
 
 def arg_parser():
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-train_filepath',type=str,default='/media/newhd/Punctuation/train')
-    parser.add_argument('-test_filepath',type=str, default='/media/newhd/Punctuation/test')
+    parser.add_argument('-train_filepath',type=str,default='/home/krishna/Krishna/Speech/punctuation-prediction/iwslt_data/train2012.txt')
+    parser.add_argument('-test_filepath',type=str, default='/home/krishna/Krishna/Speech/punctuation-prediction/iwslt_data/dev2012.txt')
+    parser.add_argument('-dataset',type=str, default='iwslt')
+    
     parser.add_argument('-model_dir',type=str, default='experiments')
     
     parser.add_argument('-num_classes', action="store_true", default=5)
@@ -28,14 +30,17 @@ def arg_parser():
 
 def main():
     args = arg_parser()
-    preprocess = PreProcess(args.train_filepath, args.test_filepath)
-    train_data, test_data = preprocess()
+    if args.dataset=='spgispeech':
+        preprocess = PreProcess(args.train_filepath, args.test_filepath)
+        train_data, test_data = preprocess()
+        train_dataset = BuildDataset['spgispeech'](train_data)
+        test_dataset = BuildDataset['spgispeech'](test_data)
+    else:
+        train_dataset = BuildDataset[args.dataset](args.train_filepath)
+        test_dataset = BuildDataset[args.dataset](args.test_filepath)
 
-    train_dataset = SPGISpeechDataset(train_data)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, collate_fn = collate_fun)
-    
-    test_dataset = SPGISpeechDataset(test_data)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, collate_fn = collate_fun)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, collate_fn = collate_fun)
     
     model = BERTPunctuator(vocab_size=args.num_classes)
     use_cuda = args.use_gpu >= 0 and torch.cuda.is_available()
@@ -73,7 +78,7 @@ def main():
                 'f1-score': float(f1),
             })
 
-        
+
     
     
 if __name__=='__main__':
