@@ -1,9 +1,5 @@
 # Punctuation prediction Using BERT
-<<<<<<< HEAD
 ```
-=======
-
->>>>>>> 16aa580d1e188f53a7382a5936e16b17abe5bba6
               precision    recall  f1-score   support
 
           NP     0.9866    0.9835    0.9850     10943
@@ -20,9 +16,5 @@ num_correct:1314
 num_gold:1682
 precision=0.77
 recall=0.78
-<<<<<<< HEAD
 f1=0.77
 ```
-=======
-f1=0.77
->>>>>>> 16aa580d1e188f53a7382a5936e16b17abe5bba6
